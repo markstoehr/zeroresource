@@ -6,6 +6,19 @@ import template_speech_rec.edge_signal_proc as esp
 from template_speech_rec import configParserWrapper
 from scipy.io import wavfile
 
+def reorg_part_for_fast_filtering(part,feature_types=8):
+    """
+    Assumes the patch for different edge types have been vertically stacked
+    and that there are eight edge types
+    dimensions are features by time
+    want time by feature by edge type
+    """
+    H = part.shape[0]/feature_types
+    return np.array([
+            part[i*H:(i+1)*H].T
+            for i in xrange(feature_types)]).swapaxes(0,1).swapaxes(1,2)
+
+
 def main(args):
     """
     """
