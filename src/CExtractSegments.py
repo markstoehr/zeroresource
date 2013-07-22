@@ -59,8 +59,8 @@ def main(args):
     example_frames = np.zeros(len(start_times),dtype=int)
 
     if args.do_wave_output:
-        start_wave_times = start_times.astype(float)/100*config_d['SPECTROGRAM']['sample_rate'] - 5*config_d['SPECTROGRAM']['num_window_samples']
-        end_wave_times = start_times.astype(float)/100*config_d['SPECTROGRAM']['sample_rate']+5*config_d['SPECTROGRAM']['num_window_samples']
+        start_wave_times = start_times.astype(float)/100*config_d['SPECTROGRAM']['sample_rate'] - 10*config_d['SPECTROGRAM']['num_window_samples']
+        end_wave_times = start_times.astype(float)/100*config_d['SPECTROGRAM']['sample_rate']+10*config_d['SPECTROGRAM']['num_window_samples']
         num_samples = np.sum(end_wave_times-start_wave_times)
         wave_examples = np.zeros(num_samples,dtype=x.dtype)
         cur_idx = 0
@@ -68,6 +68,7 @@ def main(args):
             start_time, end_time = start_end_time
             ex_length = end_time-start_time
             wave_examples[cur_idx:cur_idx+ex_length] = x[start_time:end_time]
+            cur_idx += ex_length
 
     # print out the meta-data-file
     fhandle = open("%s_meta.txt" % args.o,'w')
