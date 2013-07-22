@@ -59,16 +59,23 @@ def main(args):
     example_frames = np.zeros(len(start_times),dtype=int)
 
     if args.do_wave_output:
-        start_wave_times = start_times.astype(float)/100*config_d['SPECTROGRAM']['sample_rate'] - 10*config_d['SPECTROGRAM']['num_window_samples']
-        end_wave_times = start_times.astype(float)/100*config_d['SPECTROGRAM']['sample_rate']+10*config_d['SPECTROGRAM']['num_window_samples']
-        num_samples = np.sum(end_wave_times-start_wave_times)
+        wave_padding = 40*config_d['SPECTROGRAM']['num_window_samples']
+        start_wave_times = start_times.astype(float)/100*config_d['SPECTROGRAM']['sample_rate']  - wave_padding/10
+        end_wave_times = start_times.astype(float)/100*config_d['SPECTROGRAM']['sample_rate']+wave_padding/10
+        num_samples = np.sum(end_wave_times-start_wave_times) + wave_padding*len(end_wave_times)*2
         wave_examples = np.zeros(num_samples,dtype=x.dtype)
         cur_idx = 0
+        y = np.random.permutation(x)
+        y_front = y[:wave_padding]/8
         for example_id, start_end_time in enumerate(itertools.izip(start_wave_times,end_wave_times)):
             start_time, end_time = start_end_time
             ex_length = end_time-start_time
+            wave_examples[cur_idx:cur_idx+wave_padding] = y_front
+            cur_idx += wave_padding
             wave_examples[cur_idx:cur_idx+ex_length] = x[start_time:end_time]
             cur_idx += ex_length
+            wave_examples[cur_idx:cur_idx+wave_padding] = y_front
+            cur_idx += wave_padding
 
     # print out the meta-data-file
     fhandle = open("%s_meta.txt" % args.o,'w')
