@@ -75,5 +75,6 @@ if __name__=="__main__":
     parser.add_argument('-s',type=str,nargs='+',help="speaker identifier")
     parser.add_argument('-t',type=int,nargs='+',help="start and end times for the audio recording and identity of the word from the dictionary")
     parser.add_argument('-o',type=str,help="file prefix to save the guide and the other work")
+    parser.add_argument('-m',type=int,help="maximum section length")
     #parser.add_argument('-u',type=float,default=10,help="number of milliseconds for each time unit that the -s argument was given in, default is 10")
     main(parser.parse_args())
