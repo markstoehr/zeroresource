@@ -11,7 +11,7 @@ def main(args):
     """
     config_d = configParserWrapper.load_settings(open(args.c,'r'))
     sr, x = wavfile.read(args.f)
-    S, sample_mapping, sample_to_frames =  esp.get_spectrogram_features(x,
+    S, sample_mapping, sample_to_frames =  esp.get_spectrogram_features(x.astype(float)/(2**15-1),
                                                                         config_d['SPECTROGRAM']['sample_rate'],
                                                                         config_d['SPECTROGRAM']['num_window_samples'],
                                                                         config_d['SPECTROGRAM']['num_window_step_samples'],
