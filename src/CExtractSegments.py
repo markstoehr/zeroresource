@@ -57,6 +57,7 @@ def main(args):
     examples = np.zeros((num_frames,) + E.shape[1:],dtype=np.uint8)
     example_frames = np.zeros(len(start_times),dtype=int)
     
+    import pdb; pdb.set_trace()
     # print out the meta-data-file
     fhandle = open("%s_meta.txt" % args.o,'w')
     cur_idx = 0
