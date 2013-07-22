@@ -49,15 +49,15 @@ def main(args):
                                      verbose=False)
     E = reorg_part_for_fast_filtering(E).astype(np.uint8)
 
-    start_times = np.array(args.s[::3],dtype=int)
-    end_times = np.array(args.s[1::3],dtype=int)
-    word_identities = np.array(args.s[2::3],dtype=int)
+    start_times = np.array(args.t[::3],dtype=int)
+    end_times = np.array(args.t[1::3],dtype=int)
+    word_identities = np.array(args.t[2::3],dtype=int)
     
     num_frames = np.sum(end_times - start_times)
     examples = np.zeros((num_frames,) + E.shape[1:],dtype=np.uint8)
     example_frames = np.zeros(len(start_times),dtype=int)
     
-    import pdb; pdb.set_trace()
+
     # print out the meta-data-file
     fhandle = open("%s_meta.txt" % args.o,'w')
     cur_idx = 0
