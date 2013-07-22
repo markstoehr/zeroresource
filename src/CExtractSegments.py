@@ -70,6 +70,7 @@ def main(args):
         out_str += " %d %d\n" % (cur_idx,word_identity)
         fhandle.write(out_str)
         
+    fhandle.close()
     np.save("%s_E.npy" % args.o,examples)
     np.save("%s_frames.npy" % args.o,example_frames)
 
