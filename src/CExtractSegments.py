@@ -60,13 +60,17 @@ def main(args):
 
     if args.do_wave_output:
         wave_padding = 40*config_d['SPECTROGRAM']['num_window_samples']
-        start_wave_times = start_times.astype(float)/100*config_d['SPECTROGRAM']['sample_rate']  - wave_padding/10
-        end_wave_times = end_times.astype(float)/100*config_d['SPECTROGRAM']['sample_rate']+wave_padding/10
+        start_wave_times = start_times.astype(float)/100*config_d['SPECTROGRAM']['sample_rate']  
+        end_wave_times = end_times.astype(float)/100*config_d['SPECTROGRAM']['sample_rate']+wave_padding/5
         num_samples = np.sum(end_wave_times-start_wave_times) + wave_padding*len(end_wave_times)*2
+        
         wave_examples = np.zeros(num_samples,dtype=x.dtype)
         cur_idx = 0
         y = np.random.permutation(x)
         y_front = y[:wave_padding]/8
+        # pad the signal x just to make sure that we get
+        # the full signal
+        x = np.hstack((x,x[:wave_padding]))
         for example_id, start_end_time in enumerate(itertools.izip(start_wave_times,end_wave_times)):
             start_time, end_time = start_end_time
             ex_length = end_time-start_time
