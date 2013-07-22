@@ -3,25 +3,30 @@
 import argparse, collections
 
 def main(args):
-    fls_dict = dict[(l.split()[0][3:],l.split()[-1]) for l in open(args.f,'r').read().strip().split('\n')])
+    fls_dict = dict([(l.split()[0][3:],l.split()[-1]) for l in open(args.f,'r').read().strip().split('\n')])
 
     wd_list = [l.split() for l in open(args.d,'r').read().strip().split('\n')]
     just_words = [l[-1] for l in wd_list]
     just_words.sort()
-    word_to_dict_idx = dict((v,str(k)) for k,v in enumerate(just_words))
-    open(args.out_dict,'w').write('\n'.join(["%s %s"] % (str(k),v) for k,v in enumerate(just_words)))
+    unique_words= []
+    prev_word = ''
+    for w in just_words:
+        if w != prev_word:
+            unique_words.append(w)
+        prev_word = w[:]
 
-    seen = set()
-    seen_add = set.add
-    unique_words
+    word_to_dict_idx = dict((v,str(k)) for k,v in enumerate(unique_words))
+
+    open(args.out_dict,'w').write('\n'.join(["%s %s" % (str(k),v) for k,v in enumerate(unique_words)]))
+
     speaker_dict = {}
     for l in wd_list:
         if l[0] not in speaker_dict.keys():
             speaker_dict[l[0]] = l[1]
     
-    segments_dict = collections.default_dict(list)
+    segments_dict = collections.defaultdict(list)
     for l in wd_list:
-        segments_dict[l].extend([l[2],l[3],word_to_dict_idx[l[4]]])
+        segments_dict[l[0]].extend([l[2],l[3],word_to_dict_idx[l[4]]])
     
     for l in segments_dict.keys():
         print "CExtractSegments.py -f %s -c %s -s %s -t %s -o %s" % (
@@ -47,4 +52,5 @@ if __name__=='__main__':
     parser.add_argument('-c',type=str,help="config file path")
     parser.add_argument('-o',type=str,help="out path")
     parser.add_argument('--out_dict',type=str,help="dictionary for words")
+    main(parser.parse_args())
     
