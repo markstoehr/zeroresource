@@ -20,18 +20,21 @@ def main(args):
             speaker_dict[l[0]] = l[1]
     
     segments_dict = collections.default_dict(list)
+    max_length = 0
     for l in wd_list:
+        max_length = max(max_length,int(l[3]) - int(l[2]))
         segments_dict[l].extend([l[2],l[3],word_to_dict_idx[l[4]]])
     
     for l in segments_dict.keys():
-        print "CExtractSegments.py -f %s -c %s -s %s -t %s -o %s" % (
+        print "CExtractSegments.py -f %s -c %s -s %s -t %s -o %s -m %d" % (
             fls_dict[l],
             args.c,
             speaker_dict[l],
             ' '.join(segments_dict[l]),
             '%s_%s_%s' % (args.o,
                           l,
-                              speaker_dict[l]))
+                              speaker_dict[l]),
+            max_length)
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser("""
