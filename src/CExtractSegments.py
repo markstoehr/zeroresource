@@ -24,6 +24,7 @@ def main(args):
     """
     config_d = configParserWrapper.load_settings(open(args.c,'r'))
     sr, x = wavfile.read(args.f)
+        
     S, sample_mapping, sample_to_frames =  esp.get_spectrogram_features(x.astype(float)/(2**15-1),
                                                                         config_d['SPECTROGRAM']['sample_rate'],
                                                                         config_d['SPECTROGRAM']['num_window_samples'],
@@ -56,7 +57,17 @@ def main(args):
     num_frames = np.sum(end_times - start_times)
     examples = np.zeros((num_frames,) + E.shape[1:],dtype=np.uint8)
     example_frames = np.zeros(len(start_times),dtype=int)
-    
+
+    if args.do_wave_output:
+        start_wave_times = start_times.astype(float)/100*config_d['SPECTROGRAM']['sample_rate'] - 5*config_d['SPECTROGRAM']['num_window_samples']
+        end_wave_times = start_times.astype(float)/100*config_d['SPECTROGRAM']['sample_rate']+5*config_d['SPECTROGRAM']['num_window_samples']
+        num_samples = np.sum(end_wave_times-start_wave_times)
+        wave_examples = np.zeros(num_samples,dtype=x.dtype)
+        cur_idx = 0
+        for example_id, start_end_time in enumerate(itertools.izip(start_wave_times,end_wave_times)):
+            start_time, end_time = start_end_time
+            ex_length = end_time-start_time
+            wave_examples[cur_idx:cur_idx+ex_length] = x[start_time:end_time]
 
     # print out the meta-data-file
     fhandle = open("%s_meta.txt" % args.o,'w')
@@ -74,6 +85,11 @@ def main(args):
     fhandle.close()
     np.save("%s_E.npy" % args.o,examples)
     np.save("%s_frames.npy" % args.o,example_frames)
+    if args.do_wave_output:
+        wavfile.write("%s_padded.wav" % args.o,
+                      config_d['SPECTROGRAM']['sample_rate'],
+                      wave_examples)
+
 
     
 
@@ -92,4 +108,6 @@ if __name__=="__main__":
     parser.add_argument('-o',type=str,help="file prefix to save the guide and the other work")
     parser.add_argument('-m',type=int,help="maximum section length")
     #parser.add_argument('-u',type=float,default=10,help="number of milliseconds for each time unit that the -s argument was given in, default is 10")
+    parser.add_argument('--do_wave_output',action='store_true',
+                        help="output the wave files to listen to what was extracted")
     main(parser.parse_args())
