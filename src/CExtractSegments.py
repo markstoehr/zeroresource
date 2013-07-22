@@ -76,7 +76,10 @@ def main(args):
             ex_length = end_time-start_time
             wave_examples[cur_idx:cur_idx+wave_padding] = y_front
             cur_idx += wave_padding
-            wave_examples[cur_idx:cur_idx+ex_length] = x[start_time:end_time]
+            try:
+                wave_examples[cur_idx:cur_idx+ex_length] = x[start_time:end_time]
+            except:
+                import pdb; pdb.set_trace()
             cur_idx += ex_length
             wave_examples[cur_idx:cur_idx+wave_padding] = y_front
             cur_idx += wave_padding
