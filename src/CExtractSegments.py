@@ -60,8 +60,8 @@ def main(args):
 
     if args.do_wave_output:
         wave_padding = 40*config_d['SPECTROGRAM']['num_window_samples']
-        start_wave_times = start_times.astype(float)/100*config_d['SPECTROGRAM']['sample_rate']  
-        end_wave_times = end_times.astype(float)/100*config_d['SPECTROGRAM']['sample_rate']+wave_padding/5
+        start_wave_times = (start_times.astype(float)/100*config_d['SPECTROGRAM']['sample_rate']  ).astype(int)
+        end_wave_times = (end_times.astype(float)/100*config_d['SPECTROGRAM']['sample_rate']+wave_padding/5).astype(int)
         num_samples = np.sum(end_wave_times-start_wave_times) + wave_padding*len(end_wave_times)*2
         
         wave_examples = np.zeros(num_samples,dtype=x.dtype)
