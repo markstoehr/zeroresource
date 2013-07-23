@@ -53,10 +53,18 @@ def main(args):
     start_times = np.array(args.t[::3],dtype=int)
     end_times = np.array(args.t[1::3],dtype=int)
     word_identities = np.array(args.t[2::3],dtype=int)
+
+    max_length = np.max(end_times-start_times)
+
+    E_shape = E.shape[1:]
+    E = np.vstack((E,np.zeros((max_length,) + E_shape,dtype=np.uint8)))
+
     
     num_frames = np.sum(end_times - start_times)
     examples = np.zeros((num_frames,) + E.shape[1:],dtype=np.uint8)
     example_frames = np.zeros(len(start_times),dtype=int)
+
+
 
     if args.do_wave_output:
         wave_padding = 40*config_d['SPECTROGRAM']['num_window_samples']
@@ -91,7 +99,9 @@ def main(args):
         start_time, end_time,word_identity = start_end_time
         time_length = end_time - start_time
         example_frames[example_id] = cur_idx
-        examples[cur_idx:cur_idx+time_length] = E[start_time:end_time]
+        try:
+            examples[cur_idx:cur_idx+time_length] = E[start_time:end_time]
+        except: import pdb; pdb.set_trace()
         out_str = str(cur_idx)
         cur_idx += time_length
         out_str += " %d %d\n" % (cur_idx,word_identity)
