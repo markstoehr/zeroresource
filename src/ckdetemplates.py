@@ -6,7 +6,6 @@ from template_speech_rec import configParserWrapper
 from scipy.spatial.distance import cdist,pdist,squareform
 import matplotlib.pyplot as plt
 
-import utils
 
 
 def kde_bernoulli_probs(E,sigma):
@@ -38,7 +37,7 @@ def main(args):
     M = np.array([ tuple(int(e) for e in l.split()) for l in open("%s_meta.txt" % args.f,'r')])
     bgd = np.clip(np.load(args.b),
                   config_d['TEMPLATE_TRAINING']['bgd_min_prob'],
-                  config_d['TEMPLATE_TRAINING']['bgd_max_prob'])
+                  config_d['TEMPLATE_TRAINING']['bgd_max_prob']).ravel()
 
 
     # prepare the background portion of the log likelihood ratio filter
@@ -60,10 +59,10 @@ def main(args):
     models = np.clip(models,
                          config_d['TEMPLATE_TRAINING']['min_probability'],
                          1-config_d['TEMPLATE_TRAINING']['min_probability'])
-    model_dim = models.shape[1:]
-    models = reshape(*((len(models),) + model_dim))
+
+    models = models.reshape(*((len(models),np.prod(models.shape[1:]))))
     models_inv_log = np.log(1-models)
-    model_norm_terms = models_log.sum(1)
+    model_norm_terms = models_inv_log.sum(1)
     model_log_odds = np.log(models) - models_inv_log
     log_ratio_filter = model_log_odds - bgd_log_odds
     log_ratio_const = model_norm_terms - bgd_norm_term
@@ -82,7 +81,6 @@ and outputs models, basic function is to get the templates via the KDE
 smoothing of single examples.
 We also construct templates for computing
 """)
-    utils.add_standard_flags(parser)
     parser.add_argument('-b',type=str,help="path to background file")
     parser.add_argument('-f',type=str,help="path to the input utterance file")
     parser.add_argument('-c',type=str,help='path to the config file')
