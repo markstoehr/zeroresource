@@ -78,7 +78,6 @@ if __name__=="__main__":
         Takes in a template model and a list of locations for where
 data files can be found and then 
 """)
-    utils.add_standard_flags(parser)
     parser.add_argument('-m',type=str,help="path to background file")
     parser.add_argument('-d',type=str,help="path to the input utterance file")
     
