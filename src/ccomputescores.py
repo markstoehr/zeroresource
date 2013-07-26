@@ -48,7 +48,7 @@ def main(args):
                                                              model_length))
 
             model_product = np.dot(X,cur_log_ratio_filter.T)
-            W = np.zeros((np.max(meta[1]-meta[0]) + 2*np.max(M[1]-M[0]),
+            W = np.zeros((np.max(meta[:,1]-meta[:,0]) + 2*np.max(M[:,1]-M[:,0]),
                           cur_bgd_response.shape[1]))
             W[:model_length] = cur_bgd_response
 
@@ -57,7 +57,8 @@ def main(args):
                 target_length = target_end-target_start
                 W[model_length:model_length+target_length] = model_product[target_start:target_end]
                 W[model_length+target_length:
-                  2*model_length+target_length] = cur_bgd_response
+                          2*model_length+target_length] = cur_bgd_response
+
                 # get the window for detection -- say 1/3
                 # of the length
                 window_radius = min(target_length,model_length)/3
